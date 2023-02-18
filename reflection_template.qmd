@@ -11,7 +11,7 @@ execute:
   echo: true
 ---
 
-[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an \_\_.
+[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an A.
 
 [**Learning Objective Evidence:**]{.underline} In the code chunks below, provide code from a Lab or Challenge assignment where you believe you have demonstrated proficiency with the specified learning target. Be sure to specify **where** the code came from (e.g., Lab 4 Question 2).
 
@@ -22,25 +22,42 @@ execute:
 -   `csv`
 
 ```{r wd-1-csv}
-
+loan_17 <- read_csv(here::here('Labs', 'lab4', 'hmda_2017_ca_first-lien-owner-occupied-1-4-family-records_labels.csv'))
 ```
 
 -   `xlsx`
 
 ```{r wd-1-xlsx}
-
+library(readxl) 
+library(tidyverse)
+military <- read_xlsx(here::here("data", 
+                                 "gov_spending_per_capita.xlsx"), 
+                      sheet = , 
+                      skip = , 
+                      nmax = )
 ```
 
 -   `txt`
 
 ```{r wd-1-txt}
-
+message <- read_csv(here::here("5_strings-factors-dates", 
+                                 "Practice Activity", 
+                                 "scrambled_message.txt")
+                    )
 ```
 
 **WD-2: I can select necessary columns from a dataset.**
 
 ```{r wd-2}
-
+hiphop_cln <- lyrics |>
+  drop_na() |>
+  mutate(word = as.factor(word), 
+         subj = as.factor(subj),
+         sex = as.factor(sex),
+         ethnic = as.factor(ethnic), 
+         wvnw = if_else(ethnic == "white", "white", "nonwhite")) |>
+  distinct(subj, .keep_all = TRUE) |>
+  select(subj, sex, wvnw, intl:hiphop)
 ```
 
 **WD-3: I can filter rows from a dataframe for a *variety* of data types (e.g., numeric, integer, character, factor, date).**
@@ -48,19 +65,28 @@ execute:
 -   numeric
 
 ```{r wd-3-numeric}
-
+avocado_major |>
+  group_by(region) |>
+  filter(year == 2017)
 ```
 
 -   character -- specifically a string
 
 ```{r wd-3-string}
-
+avocado_major |>
+  group_by(region) |>
+  filter(year == 2017) |>
+  filter(type == 'organic')
 ```
 
 -   factor
 
 ```{r wd-3-factor}
-
+rod_week <- surveys |>
+  mutate(day_of_week = factor(day_of_week, levels = week_levels)) |>
+  filter(!is.na(day_of_week)) |>
+  group_by(day_of_week) |>
+  summarise(Rodent_daily = n())
 ```
 
 -   date
