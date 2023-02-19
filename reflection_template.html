@@ -2712,7 +2712,8 @@ vertical-align: -.125em;
 <li>numeric</li>
 </ul>
 <div class="cell">
-
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">real =</span> <span class="fu">across</span>(<span class="at">.cols =</span> LosAngeles<span class="sc">:</span>SanFrancisco, </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.fns =</span> diff))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>character – specifically a string</li>
@@ -2724,7 +2725,7 @@ vertical-align: -.125em;
 <li>factor</li>
 </ul>
 <div class="cell">
-
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">day_of_week =</span> <span class="fu">factor</span>(day_of_week, <span class="at">levels =</span> week_levels))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>date</li>

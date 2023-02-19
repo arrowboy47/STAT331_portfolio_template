@@ -100,25 +100,32 @@ rod_week <- surveys |>
 -   numeric
 
 ```{r wd-4-numeric}
-
+  mutate(real = across(.cols = LosAngeles:SanFrancisco, 
+                       .fns = diff))
 ```
 
 -   character -- specifically a string
 
 ```{r wd-4-string}
-
+hiphop_clean2 <- hiphop_clean |>
+  mutate(wvnw = if_else(ethnic == "white", "white", "nonwhite"))
 ```
 
 -   factor
 
 ```{r wd-4-factor}
-
+  mutate(day_of_week = factor(day_of_week, levels = week_levels))
 ```
 
 -   date
 
 ```{r wd-4-date}
-
+month <- avocado |>
+  separate(col = Date, 
+           sep = "-", 
+           into = c("Year",
+                    "Month",
+                    "Day"))
 ```
 
 **WD-5: I can use mutating joins to combine multiple dataframes.**
