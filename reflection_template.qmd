@@ -22,12 +22,14 @@ execute:
 -   `csv`
 
 ```{r wd-1-csv}
+# Lab 4 importing data
 loan_17 <- read_csv(here::here('Labs', 'lab4', 'hmda_2017_ca_first-lien-owner-occupied-1-4-family-records_labels.csv'))
 ```
 
 -   `xlsx`
 
 ```{r wd-1-xlsx}
+# PA4 loading data
 library(readxl) 
 library(tidyverse)
 military <- read_xlsx(here::here("data", 
@@ -40,6 +42,7 @@ military <- read_xlsx(here::here("data",
 -   `txt`
 
 ```{r wd-1-txt}
+#PA5.2 loading data
 message <- read_csv(here::here("5_strings-factors-dates", 
                                  "Practice Activity", 
                                  "scrambled_message.txt")
@@ -49,6 +52,7 @@ message <- read_csv(here::here("5_strings-factors-dates",
 **WD-2: I can select necessary columns from a dataset.**
 
 ```{r wd-2}
+# Challenge 3: Data Cleaning and Loading
 hiphop_cln <- lyrics |>
   drop_na() |>
   mutate(word = as.factor(word), 
@@ -65,6 +69,7 @@ hiphop_cln <- lyrics |>
 -   numeric
 
 ```{r wd-3-numeric}
+# Lab4: q1
 avocado_major |>
   group_by(region) |>
   filter(year == 2017)
@@ -73,6 +78,7 @@ avocado_major |>
 -   character -- specifically a string
 
 ```{r wd-3-string}
+# Lab4: q1
 avocado_major |>
   group_by(region) |>
   filter(year == 2017) |>
@@ -82,6 +88,7 @@ avocado_major |>
 -   factor
 
 ```{r wd-3-factor}
+#lab5: q3
 rod_week <- surveys |>
   mutate(day_of_week = factor(day_of_week, levels = week_levels)) |>
   filter(!is.na(day_of_week)) |>
@@ -92,7 +99,9 @@ rod_week <- surveys |>
 -   date
 
 ```{r wd-3-date}
-
+#PA5.1: q1
+suspects <- suspects %>% 
+  filter(pm(Time.Spotted))
 ```
 
 **WD-4: I can modify existing variables and create new variables in a dataframe for a *variety* of data types (e.g., numeric, integer, character, factor, date).**
@@ -100,26 +109,33 @@ rod_week <- surveys |>
 -   numeric
 
 ```{r wd-4-numeric}
-  mutate(real = across(.cols = LosAngeles:SanFrancisco, 
+# Lab4: Reshaping 
+mutate(real = across(.cols = LosAngeles:SanFrancisco, 
                        .fns = diff))
 ```
 
 -   character -- specifically a string
 
 ```{r wd-4-string}
+# Lab3: q7
 hiphop_clean2 <- hiphop_clean |>
-  mutate(wvnw = if_else(ethnic == "white", "white", "nonwhite"))
+  mutate(wvnw = if_else(ethnic == "white", 
+                        "white", 
+                        "nonwhite"))
 ```
 
 -   factor
 
 ```{r wd-4-factor}
-  mutate(day_of_week = factor(day_of_week, levels = week_levels))
+# Lab5: q3
+  mutate(day_of_week = factor(day_of_week, 
+                              levels = week_levels))
 ```
 
 -   date
 
 ```{r wd-4-date}
+# Lab4: summaries, q2
 month <- avocado |>
   separate(col = Date, 
            sep = "-", 
@@ -145,13 +161,18 @@ month <- avocado |>
 -   `inner_join()`
 
 ```{r wd-5-inner}
-
+# Lab4: reshaping, q1
+means <- avocado_metro |>
+  inner_join(cities)
 ```
 
 -   `full_join()`
 
 ```{r wd-5-full}
-
+#challenge 4: analysis
+codomorg <- full_join(avocados, 
+                      loan_clean_17, 
+                      by = 'region')
 ```
 
 **WD-6: I can use filtering joins to filter rows from a dataframe.**
@@ -159,13 +180,20 @@ month <- avocado |>
 -   `semi_join()`
 
 ```{r wd-6-semi}
-
+# Lab4: data intro/ cleaning
+avocado_major <- avocado |>
+  semi_join(regions_major, 
+            by = "region")
 ```
 
 -   `anti_join()`
 
 ```{r wd-6-anti}
-
+#PA5.1: q2
+suspects <- suspects %>% 
+  mutate(wday = wday(Time.Spotted, label = TRUE)) %>% 
+  anti_join(closed, 
+            by = "wday")
 ```
 
 **WD-7: I can pivot dataframes from long to wide and visa versa**
@@ -173,13 +201,17 @@ month <- avocado |>
 -   `pivot_longer()`
 
 ```{r wd-7-long}
-
+#Lab4: reshpaing, q1
+pivot_longer(cols = small:XL,
+               names_to = "bag_size",
+               values_to = "props")
 ```
 
 -   `pivot_wider()`
 
 ```{r wd-7-wide}
-
+#Lab4: reshaping, q1
+pivot_wider(names_from = region, values_from = prc)
 ```
 
 ## Reproducibility
@@ -193,13 +225,35 @@ I've done this in the following provided assignments:
 -   Example 1
 
 ```{r r-2-1}
-
+# challenge 4: anlysis
+codomorg <- full_join(avocados, loan_clean_17, by = 'region') |>
+  group_by(region) |>
+  mutate(codos_needed = `med_cost` / `mean_prices`) |>
+  mutate(years_needed = `codos_needed` / 365.25) 
 ```
 
 -   Example 2
 
 ```{r r-2-2}
+# Lab4: q5
+# first 2 chunks r for finding the top 5 cities by mean sales
+sidebside <- avocado_metro |> 
+  group_by(region) |>
+  summarise(meanTot = mean(`Total Volume`)) 
 
+sidebside <- sidebside |>
+  slice_max(meanTot, 
+            n = 5) |>
+  select(region)
+
+# joins vector of regions with the og dataset to get the info on the sales
+sidebyside <- avocado_metro |>
+  semi_join(sidebside, by = "region")
+
+ggplot(data = sidebyside, 
+       mapping = aes(y = region, 
+                     x = `Total Volume`)) + 
+  geom_boxplot()
 ```
 
 **R-3: I can write robust programs that are resistant to changes in inputs.**
@@ -207,13 +261,35 @@ I've done this in the following provided assignments:
 -   Example 1
 
 ```{r r-3-1}
-
+# lab 5: q3
+week_levels <- c('Mon', 
+                 'Tue',
+                 'Wed',
+                 'Thu',
+                 'Fri',
+                 'Sat',
+                 'Sun')
+rod_week <- surveys |>
+  filter(!is.na(day_of_week)) |>
+  group_by(day_of_week) |>
+  summarise(Rodent_daily = n()) |>
+  mutate(day_of_week = factor(day_of_week, levels = week_levels))
 ```
 
 -   Example 2
 
 ```{r r-3-2}
+# Lab4: q5
 
+# first 2 chunks r for finding the top 5 cities by mean sales
+sidebside <- avocado_metro |> 
+  group_by(region) |>
+  summarise(meanTot = mean(`Total Volume`)) 
+
+sidebside <- sidebside |>
+  slice_max(meanTot, 
+            n = 5) |>
+  select(region)
 ```
 
 ## Data Visualization & Summarization
@@ -223,13 +299,23 @@ I've done this in the following provided assignments:
 -   numeric variables
 
 ```{r dvs-1-num}
-
+# Lab2: q4 
+ggplot(data = surveys, 
+       mapping = aes(x = weight, 
+                     y = hindfoot_length)) + 
+  geom_point()
 ```
 
 -   numeric variables and categorical variables
 
 ```{r dvs-2-num-cat}
-
+# Lab2: q12
+ggplot(data = surveys, 
+       mapping = aes(x = weight, 
+                     y= species) )  + 
+  geom_jitter(color = 'tomato', 
+              alpha = 0.2) + 
+  geom_boxplot(outlier.shape = NA)
 ```
 
 -   categorical variables
