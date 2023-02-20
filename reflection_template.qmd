@@ -407,13 +407,20 @@ ggplot(data = codomorg,
 -   Example 1
 
 ```{r dvs-4-1}
-
+# Lab4: q3
+sidebside <- avocado_metro |> 
+  group_by(region) |>
+  summarise(meanTot = mean(`Total Volume`))
 ```
 
 -   Example 2
 
 ```{r dvs-4-2}
-
+# lab 3: q11
+hiphop_clean |>
+  filter(age < 20) |>
+  group_by(word) |>
+  summarise(mean(familiarity))
 ```
 
 **DVS-5: I can find summaries of variables across multiple groups.**
@@ -421,41 +428,22 @@ ggplot(data = codomorg,
 -   Example 1
 
 ```{r dvs-5-1}
-
+#challenge3: white vs. nonwhite
+hiphop_cln |>
+  group_by(wvnw) |>
+  summarise( across(
+      intl:hiphop,
+      mean))
 ```
 
 -   Example 2
 
 ```{r dvs-5-2}
-
-```
-
-**DVS-6: I can create tables which make my summaries clear to the reader.**
-
--   Example 1
-
-```{r dvs-6-1}
-
-```
-
--   Example 2
-
-```{r dvs-6-2}
-
-```
-
-**DVS-7: I show creativity in my tables.**
-
--   Example 1
-
-```{r dvs-7-1}
-
-```
-
--   Example 2
-
-```{r dvs-7-2}
-
+# challenge 3: Male vs. Female
+hiphop_cln |>
+  group_by(sex) |>
+  summarise(across(intl:hiphop,
+                   mean))
 ```
 
 ## Program Efficiency
@@ -466,93 +454,38 @@ ggplot(data = codomorg,
 
 ```{r pe-1-one-call}
 
+
 ```
 
 -   `across()`
 
 ```{r pe-1-across}
 
+mutate(real = across(.cols = LosAngeles:SanFrancisco, 
+                       .fns = diff))
 ```
 
--   `map()` functions
-
-```{r pe-1-map-1}
-
-```
-
-**PE-2: I can write functions to reduce repetition in my code.**
-
--   Example 1
-
-```{r pe2-1}
-
-```
-
--   Example 2
-
-```{r pe2-2}
-
-```
-
-**PE-3:I can use iteration to reduce repetition in my code.**
+**PE-3: I can use iteration to reduce repetition in my code.**
 
 -   `across()`
 
 ```{r pe-3-across}
 
-```
-
--   `map()` functions (Provide 2 Examples)
-
-```{r pe-3-map-1}
-
-```
-
-```{r pe-3-map-2}
-
+mutate(real = across(.cols = LosAngeles:SanFrancisco, 
+                       .fns = diff))
 ```
 
 **PE-4: I can use modern tools when carrying out my analysis.**
 
--   Example 1
+-   Example 1 seperate
 
 ```{r pe-4-1}
 
 ```
 
--   Example 2
+-   Example 2 here
 
 ```{r pe-4-2}
-
-```
-
-## Data Simulation & Modeling
-
-**DSM-1: I can simulate data from a *variety* of probability models.**
-
--   Example 1
-
-```{r dsm-1-1}
-
-```
-
--   Example 2
-
-```{r dsm-1-2}
-
-```
-
-**DSM-2: I can fit a linear regression and extract necessary summary measures.**
-
--   Example 1
-
-```{r dsm-2-1}
-
-```
-
--   Example 2
-
-```{r dsm-2-2}
 
 ```
 
