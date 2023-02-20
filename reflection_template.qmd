@@ -321,13 +321,27 @@ ggplot(data = surveys,
 -   categorical variables
 
 ```{r dvs-2-cat}
-
+#lab 5 q3
+ggplot(data = day_or_end,
+       mapping = aes(x = day_of_week,
+                     y = `sum(Rodent_daily)`)) +
+  geom_col(aes(fill = day_of_week)) + 
+  labs(y = '',
+       x = '',
+       title = 'Rodents captured during the Week')
 ```
 
 -   dates
 
 ```{r dvs-2-date}
-
+# Lab5: q2
+ggplot(data = rod_week,
+       mapping = aes(x = day_of_week,
+                     y = Rodent_daily)) +
+  geom_col(aes(fill = day_of_week)) + 
+  labs(y = '',
+       title = 'Rodent per Day',
+       x = '')
 ```
 
 **DVS-2: I use plot modifications to make my visualization clear to the reader.**
@@ -335,13 +349,26 @@ ggplot(data = surveys,
 -   Example 1
 
 ```{r dvs-2-1}
-
+#lab2 q 12
+ggplot(data = surveys, mapping = aes(x = weight, y= species) )  + geom_jitter(color = 'tomato', alpha = 0.2)+ geom_boxplot(outlier.shape = NA)
 ```
 
 -   Example 2
 
 ```{r dvs-2-2}
-
+# lab4 reshaping
+means |>
+  group_by(region) |>
+  ggplot(mapping = aes(x = region,
+                     y = props,
+                     fill = `bag_size`)) +
+         geom_col(position = "fill") + 
+  facet_wrap(~type) +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  scale_fill_manual(values = c("#a6cee3", "#1f78b4", "#b2df8a")) + 
+  labs(x = "Region of CA",
+       y = "Proportion of mean avocados sold",
+       fill = "Avocado Size")
 ```
 
 **DVS-3: I show creativity in my visualizations**
@@ -349,13 +376,30 @@ ggplot(data = surveys,
 -   Example 1
 
 ```{r dvs-3-1}
+#challege 2
+genescolor <- c("#e28743", "#022a5b", "#025b07", "#000306", "#45025b", "#97e87b", "#887be8", "#361cff", "#FFFF1C", "#1cffa7", "#1ccfff", "#881cff", "#80FF1C", "#FF1C20")
 
+ggplot(data = surveys, 
+       mapping = aes(x = weight, 
+                     y = species, 
+                     fill = species) )  + 
+  scale_color_manual(values = genescolor) + 
+  geom_jitter(color = 'tomato', 
+              alpha = 0.2) + 
+  geom_boxplot(outlier.shape = NA)
 ```
 
 -   Example 2
 
 ```{r dvs-3-2}
-
+# challenge 4: anaylsis
+ggplot(data = codomorg,
+       mapping = aes(x = region,
+                     y = codos_needed)) + 
+  geom_col(fill = c('red', 'blue', 'green', 'yellow')) +
+  labs(x = "City of CA",
+       y = "Avocados needed",
+       title = "Avocados needed to buy a House")
 ```
 
 **DVS-4: I can calculate numerical summaries of variables.**
