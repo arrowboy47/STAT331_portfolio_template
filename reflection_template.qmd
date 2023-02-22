@@ -350,7 +350,8 @@ ggplot(data = rod_week,
 
 ```{r dvs-2-1}
 #lab2 q 12
-ggplot(data = surveys, mapping = aes(x = weight, y= species) )  + geom_jitter(color = 'tomato', alpha = 0.2)+ geom_boxplot(outlier.shape = NA)
+ggplot(data = surveys, mapping = aes(x = weight, y = species) )  
++ geom_jitter(color = 'tomato', alpha = 0.2)+ geom_boxplot(outlier.shape = NA)
 ```
 
 -   Example 2
@@ -453,14 +454,28 @@ hiphop_cln |>
 -   using a single function call
 
 ```{r pe-1-one-call}
-
+# Challenge 4 importing data
+avocados <- read_csv(here::here('Labs', 'lab4', 'avocado.csv')) |>
+  separate(col = Date, 
+           sep = "-", 
+           into = c("Year",
+                    "Month",
+                    "Day")) |>
+    filter(region == c('SanDiego', 
+                     'LosAngeles', 
+                     'Sacramento', 
+                     'SanFrancisco'),
+           Year == '2017') |>
+  select(region, AveragePrice) |>
+  group_by(region) |>
+  summarise(mean_prices = mean(AveragePrice))
 
 ```
 
 -   `across()`
 
 ```{r pe-1-across}
-
+# Lab 4: reshaping q1
 mutate(real = across(.cols = LosAngeles:SanFrancisco, 
                        .fns = diff))
 ```
@@ -470,33 +485,41 @@ mutate(real = across(.cols = LosAngeles:SanFrancisco,
 -   `across()`
 
 ```{r pe-3-across}
-
+# Lab 4: reshaping q1
 mutate(real = across(.cols = LosAngeles:SanFrancisco, 
                        .fns = diff))
 ```
 
 **PE-4: I can use modern tools when carrying out my analysis.**
 
--   Example 1 seperate
+-   Example 1 - using slice
 
 ```{r pe-4-1}
+# Lab4: summaries #3 
+sidebside <- sidebside |>
+  slice_max(meanTot, 
+            n = 5) |>
+  select(region)
 
 ```
 
--   Example 2 here
+-   Example 2 - using here
 
 ```{r pe-4-2}
+# challenge 2: importing data 
+library('tidyverse')
+surveys <- read_csv(here::here('Labs', 'lab2', 'surveys.csv'))
 
 ```
 
 ## Revising My Thinking
 
-<!-- How did you revise your thinking throughout the course? How did you revise your thinking on the code examples you have provided in your portfolio? -->
+When doing revising I try to think about how the comments given will help me reinforce good practices as I continue in my programming career. I also try to think some of the learning targets, mostly efficiency, code resistant to changes, and using modern tools. For example, when looking back for the portfolio, I noticed I had a lot of formatting errors in my earlier projects but became a lot better over time. I also noticed my use of bar plots for vars that were not proportions/ percentages, so going forward I am going to remember to not use them. Some efficiency things that I noticed was that in lab 4 I was using dataframes for a join when I should have used a tibble, and also in lab 5, I was creating new factors to modify the levels rather than using the fct_reorder function (a modern tool).
 
 ## Extending My Thinking
 
-<!-- How did you extended your thinking throughout the course? How did you extend your thinking on the code examples you have provided in your portfolio? -->
+Much like I mentioned in my reflection from week 4, I feel like most of my extended thinking comes from areas of interest. Expanding, I think I also realized I like to do a lot more of the analysis and trying to incorporate research from external sources and combining it with my knowledge from the course. Additionally, I realized my extending rarely is reflected in my visualizations, which is something I want to work on for the rest of the quarter because I think that visualizations are really important for statisticians and data scientists.
 
 ## Peer Support & Collaboration
 
-<!-- Include an image of feedback you gave that you are proud of (either in a peer review or in Discord) -->
+Your code looks very good! I think there are a few formatting mistakes. There were a couple times when you didn't do a new line after a comma. Your graphs look really good. I really like how you color coded your conv vs. avocado plot by avocado type. Additionally, I really like how you used very efficient code, like using the labs function on your ggplot and the joins we were taught that week. Overall great job!
