@@ -3,3 +3,15 @@ title: "Lightening Round Essays"
 format: html
 editor: visual
 ---
+
+lightning round:
+
+If Giovanni doesn't earn an A, then nobody should, because he is always helping people in discord and is always giving really good advice! This shows he has a really good understanding of the material.
+
+I think the most difficult part of this class was creating plots using ggplot. I really stuggling with figuring out when to use the right graph for the data as well as trying to understand the layer.
+
+The easiest concept for me to understand was creating functions. It was probably easy because I have used functions before in other languages, so I was familiar with them.
+
+The most interesting part of this class was being able to create visualizations. Like I mentioned before in my data science essay, I think it is so cool being able to go from a single file and an IDE and porduce a beautiful looking plot.
+
+One piece of advice I would give would be to read documentation and make use of the discord server. These are the 2 resources that helped me the most and I think it would be very beneficial for anyone in this class.

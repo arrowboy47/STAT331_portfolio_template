@@ -78,11 +78,10 @@ avocado_major |>
 -   character -- specifically a string
 
 ```{r wd-3-string}
-# Lab4: q1
+# Lab4: q1 - revised here
 avocado_major |>
   group_by(region) |>
-  filter(year == 2017) |>
-  filter(type == 'organic')
+  filter(year == 2017, type == 'organic')
 ```
 
 -   factor
@@ -128,8 +127,11 @@ hiphop_clean2 <- hiphop_clean |>
 
 ```{r wd-4-factor}
 # Lab5: q3
-  mutate(day_of_week = factor(day_of_week, 
-                              levels = week_levels))
+rod_week <- surveys |>
+  filter(!is.na(day_of_week)) |>
+  group_by(day_of_week) |>
+  summarise(Rodent_daily = n()) |>
+  mutate(day_of_week = factor(day_of_week, levels = week_levels))
 ```
 
 -   date
@@ -202,7 +204,15 @@ suspects <- suspects %>%
 
 ```{r wd-7-long}
 #Lab4: reshpaing, q1
-pivot_longer(cols = small:XL,
+means <- avocado_metro |>
+  inner_join(cities) |>
+  group_by(region, type) |> 
+  summarise(small = mean(`Small Bags`),
+            large = mean(`Large Bags`),
+            XL = mean(`XLarge Bags`)) |>
+  mutate(across(.cols = `small`:`XL`,
+                .fns = ~.x / ( small + large + XL))) |>
+  pivot_longer(cols = small:XL,
                names_to = "bag_size",
                values_to = "props")
 ```
@@ -211,7 +221,11 @@ pivot_longer(cols = small:XL,
 
 ```{r wd-7-wide}
 #Lab4: reshaping, q1
-pivot_wider(names_from = region, values_from = prc)
+cali_avocados <- avocado_metro |>
+  semi_join(cities) |>
+  group_by(region, type) |>
+  summarise(prc = mean(`AveragePrice`)) |>
+  pivot_wider(names_from = region, values_from = prc)
 ```
 
 ## Reproducibility
@@ -350,8 +364,8 @@ ggplot(data = rod_week,
 
 ```{r dvs-2-1}
 #lab2 q 12
-ggplot(data = surveys, mapping = aes(x = weight, y = species) )  
-+ geom_jitter(color = 'tomato', alpha = 0.2)+ geom_boxplot(outlier.shape = NA)
+ggplot(data = surveys, mapping = aes(x = weight, y = species) )  +
+  geom_jitter(color = 'tomato', alpha = 0.2)+ geom_boxplot(outlier.shape = NA)
 ```
 
 -   Example 2
@@ -447,6 +461,47 @@ hiphop_cln |>
                    mean))
 ```
 
+\*\*DVS-6: I can create tables which make my summaries clear to the reader.\*\*
+
+\- Example 1
+
+```{r dvs-6-1} # lab 9 importing data}
+Anames <- read.csv(here('Labs', 'lab9', 'StateNames_A.csv'))
+datatable(Anames)
+```
+
+\- Example 2
+
+```{r dvs-6-2} # lab 9 q1}
+temp |>
+  kable(format = "html",
+        caption = "==>Occurance of the name Allison by state and year<==") |>
+  kable_classic(html_font = "FiraCode Nerd Font")
+```
+
+\*\*DVS-7: I show creativity in my tables.\*\*
+
+\- Example 1
+
+```{r dvs-7-1} # lab 9 q10 (revised here)}
+# percents
+percs <- percents(CA)
+#rbind usuage found: https://www.statology.org/r-append-to-data-frame/
+rbind(percs, percents(PA))  |>
+  gt() |>
+  tab_header(title =  "Occurance of the name Allison by state and year in %") |>
+  fmt_percent(columns = 2:4, decimals = 2) 
+```
+
+\- Example 2
+
+```{r dvs-7-2} # lab 9 q9}
+CAvsPA |>
+  kable(format = "html",
+        caption = "==>Occurance of the  3 Alan names in PA and CA<==") |>
+  kable_classic(html_font = "FiraCode Nerd Font")
+```
+
 ## Program Efficiency
 
 **PE-1: I can write concise code which does not repeat itself.**
@@ -476,8 +531,66 @@ avocados <- read_csv(here::here('Labs', 'lab4', 'avocado.csv')) |>
 
 ```{r pe-1-across}
 # Lab 4: reshaping q1
-mutate(real = across(.cols = LosAngeles:SanFrancisco, 
+cali_avocados <- avocado_metro |>
+  semi_join(cities) |>
+  group_by(region, type) |>
+  summarise(prc = mean(`AveragePrice`)) |>
+  pivot_wider(names_from = region, values_from = prc) |>
+  mutate(real = across(.cols = LosAngeles:SanFrancisco, 
                        .fns = diff))
+```
+
+**PE-2: I can write functions to reduce repetition in my code.**
+
+\- Example 1
+
+```{r pe2-1}
+# lab8 Full phrase part
+make_phrase <- function(Day, Day.in.Words, Gift.Item, Verb, Adjective, Location, spice) {
+  
+  ## Step 1: Replace NAs with blank strings
+  Verb <- str_replace_na(Verb, '')
+  Adjective <- str_replace_na(Adjective, '')
+  Location <- str_replace_na(Location, '')
+  
+  ## Step 2: If the day is larger than 1, the items need pluralized! 
+  Gift.Item <- case_when(Day.in.Words != 'first' ~ pluralize_gift(Gift.Item),
+                         .default = Gift.Item)
+  
+  ## Step 3: If the day is 1, you need to add an "a" or "an" before the gift 
+  Gift.Item <- case_when(Day.in.Words == 'first' & str_starts(Gift.Item, "[aeiouy]")~ str_c('an', Gift.Item), 
+                         Day.in.Words == 'first' & str_starts(Gift.Item, "[^aeiouy]")~ str_c('a ', Gift.Item),
+                         .default = Gift.Item)
+  
+  ## Step 4: Glue all of the pieces together to make a phrase! 
+ if(Day.in.Words == 'first'){
+   
+    return(glue('{Gift.Item} {Location}'))
+   
+ }else{
+   
+   return(glue('{english(Day)} {Adjective} {Gift.Item} {Verb}'))
+ }
+  
+}
+```
+
+\- Example 2
+
+```{r pe2-2}
+# lab 7 part 3.2 adding stops
+tryagain <- function(sd){
+  
+  stopifnot(is.numeric(sd), !length(sd) == 0)
+
+  sd_range <- range(sd, na.rm = T)
+  if(sd_range[[1]] == 0 & sd_range[[2]] == 1){
+    print('Looks good to me!')
+  }else{
+    print('It doesn\'t look good to me :(')
+  }
+
+}
 ```
 
 **PE-3: I can use iteration to reduce repetition in my code.**
@@ -486,8 +599,28 @@ mutate(real = across(.cols = LosAngeles:SanFrancisco,
 
 ```{r pe-3-across}
 # Lab 4: reshaping q1
-mutate(real = across(.cols = LosAngeles:SanFrancisco, 
+cali_avocados <- avocado_metro |>
+  semi_join(cities) |>
+  group_by(region, type) |>
+  summarise(prc = mean(`AveragePrice`)) |>
+  pivot_wider(names_from = region, values_from = prc) |>
+  mutate(real = across(.cols = LosAngeles:SanFrancisco, 
                        .fns = diff))
+```
+
+\- \`map()\` functions (Provide 2 Examples)
+
+```{r pe-3-map-1}
+# lab 8 full song (last question)
+song <- map_chr(.x = 1:12,
+        .f  = ~ sing_day(xmas2, .x, Full.Phrase))
+```
+
+```{r pe-3-map-2}
+# lab 8 full phrase part
+xmas2 <- xmas |>
+  mutate(Full.Phrase = pmap_chr(xmas, 
+                                make_phrase))
 ```
 
 **PE-4: I can use modern tools when carrying out my analysis.**
@@ -509,6 +642,66 @@ sidebside <- sidebside |>
 # challenge 2: importing data 
 library('tidyverse')
 surveys <- read_csv(here::here('Labs', 'lab2', 'surveys.csv'))
+
+```
+
+## Data Simulation & Modeling
+
+**DSM-1: I can simulate data from a \_variety\_ of probability models.**
+
+\- Example 1
+
+```{r dsm-1-1}
+# practice 9 q3
+music_man <- function(n_tromb, n_cor, n_reed){
+  
+  cornets <- runif(n_cor,
+                   min = 1.5,
+                   max = 3.5)
+  trombones <- rnorm(n_tromb, 
+                     mean = 4.6, 
+                     sd = .8)
+  reeds <- rchisq(n_reed,
+                  df = 4)
+  
+  return(sum(cornets, cornets, reeds))
+  
+}
+```
+
+\- Example 2
+
+```{r dsm-1-2}
+#practice 9 q3
+normdist <- rnorm(100, 
+                  mean = 4.6, 
+                  sd = .8)
+```
+
+**DSM-2: I can fit a linear regression and extract necessary summary measures.**
+
+\- Example 1
+
+```{r dsm-2-1}
+
+```
+
+\- Example 2
+
+```{r dsm-2-2} # lab 9 q4}
+allison_linear <- allison_f |>
+  summarise(across(.col = `1997`:`2014`,
+                   .fns = ~sum(.x))) |>
+  pivot_longer(cols = `1997`:`2014`,
+               values_to = 'Count') |>
+  mutate(`name` = as.numeric(`name`)) |>
+  lm(`Count` ~ `name`, data = _)
+
+#residuals vs. order
+allison_linear |> 
+  broom::augment() |> 
+  ggplot(mapping = aes(y = .resid, x = .fitted)) +
+  geom_point()
 
 ```
 
